@@ -1,60 +1,8 @@
-/*********************************************************************************
- * ESP-Now-Serial-Bridge (Optimized version)
- *
- * ESP32 based serial bridge for transmitting serial data between two boards
- * 
- * Optimized version based on https://github.com/yuri-rage/ESP-Now-Serial-Bridge
- * 
- * Tested with baud rate 921600 and video streaming bitrates of up to 400 kbps.
- *
- * The primary purpose of this sketch was to enable a MAVLink serial connection.
- *
- * Range is easily better than regular WiFi, however an external antenna may be
- *   required for truly long range messaging, to combat obstacles/walls, and/or
- *   to achieve success in an area saturated with 2.4GHz traffic.
- * 
- * I made heavy use of compiler macros to keep the sketch compact/efficient.
- *
- * To find the MAC address of each board, uncomment the #define DEBUG line, 
- *   and monitor serial output on boot.  Set the OPPOSITE board's IP address
- *   as the value for RECVR_MAC in the macros at the top of the sketch.
- *   
- * The BLINK_ON_* macros should be somewhat self-explanatory.  If your board has a built-in
- *   LED (or you choose to wire an external one), it can indicate ESP-Now activity as
- *   defined by the macros you choose to enable.
- *
- * When uploading the sketch, be sure to define BOARD1 or BOARD2 as appropriate
- *   before compiling.
- *
- * -- Yuri - Sep 2021
- * -- hhackbarth - March 2023
- *
- * Based on this example - https://randomnerdtutorials.com/esp-now-two-way-communication-esp32/
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files.
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- * 
- * Modifications/Optimizations:
- * ----------------------------
- * 
- * The original version was modified for more efficient Serial.read() and for an option
- * to configure for higher data rates (2 Mbps).
- * 
- * At the moment, the Serial initialization is modified in order to communicate through
- * the USB Serial interface.
- * 
- * ToDo: Find a way to suppress the initial output "ESP-ROM:esp32c3-api1-20210207"(+CRLF)
- * (HEX: 4553502D524F4D3A657370333263332D617069312D32303231303230370D0A) (31 bytes)
- * 
-*********************************************************************************/
-
-#include <esp_now.h>
+#include <Arduino.h>
+#include <HardwareSerial.h>
 #include <WiFi.h>
 #include <esp_wifi.h>
-#include <HardwareSerial.h>
+#include <esp_now.h>
 
 #define BOARD2 // BOARD1 or BOARD2 acting as OPPONENT!
 //#define USE_LED // enables LED usage
@@ -185,7 +133,7 @@ void setup() {
   #ifdef DEBUG
   SerialMON.println(send_timeout);
   #endif
-  WiFi.mode(WIFI_STA);
+  WiFi.mode(wifi_mode_t::WIFI_MODE_STA);
 
   #ifdef DEBUG
   SerialMON.print("ESP32 MAC Address: ");
